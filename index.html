@@ -3,726 +3,1247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PowerCorp — Dev Roadmap</title>
+<title>PowerCorp — Development Roadmap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --bg:       #050810;
-    --bg2:      #080d1a;
-    --bg3:      #0c1220;
-    --border:   #1a2540;
-    --border2:  #243060;
+    --bg:        #050810;
+    --bg2:       #080d1a;
+    --bg3:       #0c1220;
+    --panel:     #0a0f1c;
+    --border:    #1a2540;
+    --border2:   #243060;
 
-    --orange:   #e8621a;
-    --orange2:  #ff8040;
-    --oglow:    rgba(232,98,26,0.18);
+    --orange:    #e8621a;
+    --orange2:   #ff8040;
+    --orangelow: rgba(232,98,26,0.15);
+    --orangeglow:#e8621a40;
 
-    --cyan:     #2ae8d0;
-    --text:     #c8d4f0;
-    --textmid:  #7890b8;
-    --textlow:  #3a4a6a;
+    --cyan:      #2ae8d0;
+    --cyanlow:   rgba(42,232,208,0.10);
+    --blue:      #1a6ae8;
+    --bluelow:   rgba(26,106,232,0.15);
+    --purple:    #8a2ae8;
+    --purplelow: rgba(138,42,232,0.15);
+    --green:     #2ae85a;
+    --greenlow:  rgba(42,232,90,0.12);
+    --red:       #e82a2a;
+    --redlow:    rgba(232,42,42,0.12);
 
-    --mono:     'Share Tech Mono', monospace;
-    --display:  'Orbitron', sans-serif;
-    --body:     'Rajdhani', sans-serif;
+    --text:      #c8d4f0;
+    --textmid:   #7890b8;
+    --textlow:   #3a4a6a;
+
+    --mono:      'Share Tech Mono', monospace;
+    --display:   'Orbitron', sans-serif;
+    --body:      'Rajdhani', sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+  html, body {
+    width: 100%; height: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: var(--body);
-    padding: 32px 24px 60px;
-    max-width: 860px;
-    margin: 0 auto;
+    overflow: hidden;
   }
 
-  /* scanlines */
+  /* === SCANLINE OVERLAY === */
   body::before {
     content: '';
-    position: fixed; inset: 0;
+    position: fixed;
+    inset: 0;
     background: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
     );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* === NOISE TEXTURE === */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
     pointer-events: none;
     z-index: 999;
   }
 
-  /* ── HEADER ── */
-  .doc-header {
-    border: 1px solid var(--border2);
-    border-left: 3px solid var(--orange);
-    background: var(--bg2);
-    padding: 22px 24px 18px;
-    margin-bottom: 32px;
+  /* === LAYOUT === */
+  .shell {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    padding: 0;
     position: relative;
-    overflow: hidden;
-  }
-  .doc-header::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 120px; height: 120px;
-    background: radial-gradient(circle at top right, rgba(232,98,26,0.08), transparent 70%);
-    pointer-events: none;
-  }
-  .doc-header-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-  .doc-logo {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-    color: var(--orange2);
-  }
-  .doc-logo span {
-    display: block;
-    font-size: 9px;
-    font-family: var(--mono);
-    color: var(--textmid);
-    letter-spacing: 0.2em;
-    font-weight: 400;
-    margin-top: 3px;
-  }
-  .doc-classification {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--orange);
-    letter-spacing: 0.2em;
-    border: 1px solid var(--orange);
-    padding: 3px 8px;
-    opacity: 0.7;
-    align-self: flex-start;
-  }
-  .doc-title {
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .doc-meta {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .doc-meta-item {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--textlow);
-    letter-spacing: 0.1em;
-  }
-  .doc-meta-item strong {
-    color: var(--textmid);
-    font-weight: 400;
   }
 
-  /* ── SECTION DIVIDER ── */
-  .section-div {
+  /* === TOP HUD BAR === */
+  .hud-top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 28px 0 16px;
+    justify-content: space-between;
+    padding: 12px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    flex-shrink: 0;
   }
-  .section-div-line {
-    flex: 1;
+  .hud-top::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
     height: 1px;
-    background: var(--border);
-  }
-  .section-div-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--textlow);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    white-space: nowrap;
+    background: linear-gradient(90deg, transparent, var(--orange) 30%, var(--orange) 70%, transparent);
+    opacity: 0.5;
   }
 
-  /* ── TIMELINE STRIP ── */
-  .timeline-strip {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border: 1px solid var(--border);
-    margin-bottom: 6px;
-    background: var(--bg2);
+  .logo-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
-  .ts-cell {
-    padding: 6px 8px;
+  .logo-mark {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    clip-path: polygon(12% 0%, 88% 0%, 100% 12%, 100% 88%, 88% 100%, 12% 100%, 0% 88%, 0% 12%);
+    background: var(--orangelow);
+  }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-text {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--orange2);
+    text-shadow: 0 0 20px var(--orangeglow);
+  }
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textmid);
+    letter-spacing: 0.12em;
+    margin-top: 1px;
+  }
+
+  .hud-center {
+    text-align: center;
+  }
+  .hud-title {
+    font-family: var(--display);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    text-shadow: 0 0 12px var(--cyan);
+  }
+  .hud-subtitle {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+  }
+
+  .hud-status {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .stat-chip {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textmid);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+  }
+  .stat-chip .val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--orange2);
+    font-family: var(--display);
+    letter-spacing: 0.05em;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(0.8)} }
+
+  /* === MAIN CONTENT === */
+  .main {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* === LEFT SIDEBAR === */
+  .sidebar {
     border-right: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: var(--bg); }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  .sidebar-section-label {
     font-family: var(--mono);
     font-size: 8px;
     color: var(--textlow);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
+    padding: 0 16px 8px;
+    text-transform: uppercase;
   }
-  .ts-cell:last-child { border-right: none; }
-  .ts-cell .ts-mo {
-    font-family: var(--display);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--textmid);
+
+  .phase-entry {
+    padding: 10px 16px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .phase-entry:hover { background: rgba(255,255,255,0.02); }
+  .phase-entry.active { border-left-color: var(--orange); background: var(--orangelow); }
+
+  .pe-code {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
     letter-spacing: 0.1em;
-    display: block;
-    line-height: 1;
     margin-bottom: 2px;
   }
-  .ts-cell.active .ts-mo { color: var(--orange); }
-  .ts-cell.active { background: rgba(232,98,26,0.06); }
+  .phase-entry.active .pe-code { color: var(--orange); }
 
-  /* ── PHASE BLOCK ── */
-  .phase-block {
-    margin-bottom: 10px;
-    position: relative;
+  .pe-name {
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--textmid);
+    text-transform: uppercase;
+    line-height: 1.2;
   }
+  .phase-entry.active .pe-name { color: var(--orange2); }
 
-  /* parallel group wrapper */
-  .parallel-group {
-    border: 1px dashed var(--border2);
-    padding: 8px 8px 4px;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  .parallel-group::before {
-    content: '∥ PARALLEL EXECUTION';
-    position: absolute;
-    top: -8px; left: 12px;
-    background: var(--bg);
+  .pe-dates {
     font-family: var(--mono);
     font-size: 8px;
-    color: var(--cyan);
-    letter-spacing: 0.15em;
-    padding: 0 6px;
-    opacity: 0.7;
+    color: var(--textlow);
+    margin-top: 3px;
   }
 
-  .phase-bar {
+  .pe-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 7px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+  .pe-badge.parallel { background: var(--cyanlow); color: var(--cyan); border: 1px solid var(--cyan)44; }
+  .pe-badge.seq { background: var(--bluelow); color: #8ab4ff; border: 1px solid #1a6ae844; }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 16px;
+  }
+
+  /* === TIMELINE PANEL === */
+  .timeline-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Month ruler */
+  .month-ruler {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 4px;
-    height: 62px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg2);
+  }
+  .month-cell {
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .month-cell:last-child { border-right: none; }
+  .month-cell .m-num { font-size: 18px; font-family: var(--display); color: var(--textlow); line-height: 1; }
+  .month-cell.current .m-num { color: var(--orange); }
+  .month-cell.current { background: var(--orangelow); }
+
+  /* Grid area */
+  .grid-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 12px 20px;
     position: relative;
   }
+  .grid-area::-webkit-scrollbar { width: 4px; }
+  .grid-area::-webkit-scrollbar-track { background: var(--bg); }
+  .grid-area::-webkit-scrollbar-thumb { background: var(--border2); }
 
-  .phase-bar-fill {
+  /* Grid column lines */
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .grid-line {
+    border-right: 1px dashed var(--border);
+    opacity: 0.4;
+  }
+  .grid-line:last-child { border-right: none; }
+
+  /* Track rows */
+  .track-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 10px;
+    min-height: 64px;
+    align-items: center;
+  }
+
+  .track-spacer { /* for empty cells */ }
+
+  .mission-bar {
+    position: relative;
+    height: 58px;
+    border-radius: 3px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 0 12px;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.15s;
+    overflow: hidden;
     border-top: 1px solid;
     border-bottom: 1px solid;
     border-right: 1px solid;
     border-left: 3px solid;
-    position: relative;
-    overflow: hidden;
   }
-  .phase-bar-fill::before {
+  .mission-bar:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+    z-index: 10;
+  }
+  .mission-bar::before {
     content: '';
     position: absolute;
     inset: 0;
     background: repeating-linear-gradient(
       90deg,
-      transparent, transparent 5px,
-      rgba(255,255,255,0.015) 5px, rgba(255,255,255,0.015) 10px
+      transparent,
+      transparent 4px,
+      rgba(255,255,255,0.012) 4px,
+      rgba(255,255,255,0.012) 8px
     );
   }
-  /* top shine line */
-  .phase-bar-fill::after {
+  .mission-bar::after {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, currentColor, transparent 60%);
-    opacity: 0.25;
+    opacity: 0.4;
+    background: linear-gradient(90deg, currentColor, transparent);
   }
 
   .bar-code {
     font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.14em;
-    opacity: 0.55;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
     margin-bottom: 3px;
-    text-transform: uppercase;
-    position: relative;
   }
-  .bar-title {
+  .bar-name {
     font-family: var(--display);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1.2;
-    position: relative;
   }
-  .bar-sub {
+  .bar-tasks {
     font-family: var(--mono);
     font-size: 8px;
-    opacity: 0.5;
+    opacity: 0.55;
     margin-top: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    position: relative;
   }
 
-  /* color themes */
-  .theme-a  { background: #0b1828; border-color: #2a5cb8; color: #8ab8ff; }
-  .theme-b  { background: #0a1e14; border-color: #1a8a50; color: #6adfa8; }
-  .theme-c  { background: #1c0f0c; border-color: #b82a6e; color: #ff8ab8; }
-  .theme-d  { background: #1c1708; border-color: #b88a1a; color: #ffd880; }
-  .theme-e1 { background: #140a22; border-color: #7a2ab8; color: #c88aff; }
-  .theme-e2 { background: #07121e; border-color: #1a7ab8; color: #80c8ff; }
-
-  /* span helpers */
-  .col-1 { grid-column: 1 / 2; }
-  .col-2 { grid-column: 2 / 3; }
-  .col-3 { grid-column: 3 / 4; }
-  .col-4-8 { grid-column: 4 / 8; }
-
-  /* ── TASK MANIFEST ── */
-  .manifest {
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    margin-bottom: 10px;
+  /* parallel indicator */
+  .par-marker {
+    position: absolute;
+    right: -1px; top: -1px;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: transparent;
   }
-  .manifest-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 14px;
+
+  /* Color variants */
+  .bar-a {
+    background: #0d1a2e;
+    border-color: #2a5cb8;
+    color: #8ab8ff;
+  }
+  .bar-b {
+    background: #0d2018;
+    border-color: #1a8a50;
+    color: #6adfa8;
+  }
+  .bar-c {
+    background: #20100d;
+    border-color: #b82a6e;
+    color: #ff8ab8;
+  }
+  .bar-d {
+    background: #201a08;
+    border-color: #b88a1a;
+    color: #ffd880;
+  }
+  .bar-e1 {
+    background: #180d28;
+    border-color: #7a2ab8;
+    color: #c88aff;
+  }
+  .bar-e2 {
+    background: #081828;
+    border-color: #1a7ab8;
+    color: #80c8ff;
+  }
+
+  /* row group label */
+  .row-group-label {
+    grid-column: 1 / -1;
+    padding: 8px 4px 4px;
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--textlow);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     border-bottom: 1px solid var(--border);
-    background: var(--bg3);
+    margin-bottom: 4px;
   }
-  .manifest-header-title {
+  .row-group-label span {
+    background: var(--bg2);
+    padding: 1px 6px;
+  }
+
+  /* === DETAIL PANEL (bottom) === */
+  .detail-strip {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    flex-shrink: 0;
+    padding: 14px 24px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    min-height: 120px;
+    max-height: 160px;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s;
+  }
+  .detail-strip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan) 20%, transparent 80%);
+    opacity: 0.3;
+  }
+
+  .detail-header {
+    min-width: 200px;
+  }
+  .detail-code {
     font-family: var(--mono);
     font-size: 9px;
     color: var(--textlow);
     letter-spacing: 0.2em;
-    text-transform: uppercase;
+    margin-bottom: 4px;
   }
-  .manifest-header-count {
+  .detail-name {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .detail-dates {
     font-family: var(--mono);
     font-size: 9px;
-    color: var(--orange);
+    color: var(--textmid);
+    margin-bottom: 6px;
+  }
+  .detail-parallel-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 8px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    background: var(--cyanlow);
+    color: var(--cyan);
+    border: 1px solid var(--cyan)44;
     letter-spacing: 0.1em;
   }
 
-  .manifest-body {
+  .detail-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .detail-tasks {
+    flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-  }
-  @media (max-width: 600px) {
-    .manifest-body { grid-template-columns: 1fr; }
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 4px 16px;
+    align-content: start;
+    overflow: hidden;
   }
 
-  .manifest-group {
-    padding: 10px 14px;
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .manifest-group:nth-child(even) { border-right: none; }
-  .manifest-group:nth-last-child(-n+2) { border-bottom: none; }
-  /* single-column fallback */
-  .manifest-body.single .manifest-group { border-right: none; grid-column: 1/-1; }
-
-  .mg-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--orange);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 7px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--oglow);
-  }
-  .mg-task {
+  .task-item {
     display: flex;
     align-items: baseline;
-    gap: 7px;
+    gap: 6px;
     font-family: var(--mono);
     font-size: 10px;
     color: var(--textmid);
-    line-height: 1.85;
+    line-height: 1.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .mg-task::before {
+  .task-item::before {
     content: '›';
     color: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .detail-placeholder {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--textlow);
+    letter-spacing: 0.1em;
+    align-self: center;
+    animation: blink 1.2s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* === BOTTOM HUD === */
+  .hud-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    flex-shrink: 0;
+  }
+  .hud-bottom-item {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--textlow);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hud-bottom-item .key {
+    padding: 1px 4px;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    font-size: 8px;
+    color: var(--textmid);
+  }
+
+  /* Power bar decorative */
+  .power-bar {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+  .power-seg {
+    width: 10px; height: 6px;
+    background: var(--orange);
+    opacity: 0.8;
+  }
+  .power-seg:nth-child(n+6) { opacity: 0.3; }
+  .power-seg:nth-child(n+8) { background: var(--red); opacity: 0.15; }
+
+  /* ========= MODAL ========= */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    width: 520px;
+    max-width: 94vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  }
+  .modal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--orange), transparent 60%);
+  }
+  .modal-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .modal-code {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.2em;
+    margin-bottom: 4px;
+  }
+  .modal-title {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .modal-meta {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textmid);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .modal-body {
+    padding: 16px 20px 20px;
+    overflow-y: auto;
+  }
+  .modal-body::-webkit-scrollbar { width: 3px; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  .modal-task-group { margin-bottom: 10px; }
+  .modal-task-group-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--orange);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--orangelow);
+  }
+  .modal-task {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .modal-task:last-child { border-bottom: none; }
+  .modal-task-idx {
+    color: var(--orange);
+    min-width: 22px;
     flex-shrink: 0;
     opacity: 0.7;
   }
 
-  /* ── FOOTER ── */
-  .doc-footer {
-    margin-top: 40px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .doc-footer-left {
+  .modal-close {
+    position: absolute;
+    top: 12px; right: 16px;
     font-family: var(--mono);
-    font-size: 8px;
+    font-size: 10px;
     color: var(--textlow);
-    letter-spacing: 0.12em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    letter-spacing: 0.1em;
+    transition: color 0.1s, border-color 0.1s;
   }
-  .power-bar {
-    display: flex;
-    gap: 3px;
-    align-items: center;
-  }
-  .power-seg {
-    width: 8px; height: 5px;
-    background: var(--orange);
-  }
-  .power-seg:nth-child(n+7) { opacity: 0.2; }
+  .modal-close:hover { color: var(--orange); border-color: var(--orange); }
 
-  /* ── LEGEND ── */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 24px;
+  /* === CORNER DECS === */
+  .corner-tl, .corner-br {
+    position: fixed;
+    width: 40px; height: 40px;
+    pointer-events: none;
+    z-index: 990;
   }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--textlow);
-    letter-spacing: 0.08em;
-  }
-  .legend-pip {
-    width: 18px; height: 4px;
-    border-radius: 1px;
-    flex-shrink: 0;
-  }
+  .corner-tl { top: 0; left: 0; border-top: 1px solid var(--orange); border-left: 1px solid var(--orange); opacity: 0.4; }
+  .corner-br { bottom: 0; right: 0; border-bottom: 1px solid var(--orange); border-right: 1px solid var(--orange); opacity: 0.4; }
 
-  /* staggered fade-in — CSS only */
-  .phase-block { animation: fadeUp 0.5s ease both; }
-  .phase-block:nth-child(1) { animation-delay: 0.05s; }
-  .phase-block:nth-child(2) { animation-delay: 0.10s; }
-  .phase-block:nth-child(3) { animation-delay: 0.15s; }
-  .phase-block:nth-child(4) { animation-delay: 0.20s; }
-  .phase-block:nth-child(5) { animation-delay: 0.25s; }
-  .phase-block:nth-child(6) { animation-delay: 0.30s; }
-  .parallel-group { animation: fadeUp 0.4s ease both; }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  /* === INTRO ANIMATION === */
+  .shell { animation: fadeIn 0.6s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .mission-bar { animation: slideIn 0.4s ease both; }
+  .track-row:nth-child(2) .mission-bar { animation-delay: 0.05s; }
+  .track-row:nth-child(3) .mission-bar { animation-delay: 0.1s; }
+  .track-row:nth-child(4) .mission-bar { animation-delay: 0.15s; }
+  .track-row:nth-child(5) .mission-bar { animation-delay: 0.2s; }
+  .track-row:nth-child(6) .mission-bar { animation-delay: 0.25s; }
+  .track-row:nth-child(7) .mission-bar { animation-delay: 0.3s; }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
 </style>
 </head>
 <body>
 
-<!-- ═══ HEADER ═══ -->
-<div class="doc-header">
-  <div class="doc-header-top">
-    <div class="doc-logo">
-      POWERCORP
-      <span>byteZorro Games · Development Document</span>
-    </div>
-    <div class="doc-classification">INTERNAL / DEV ROADMAP</div>
-  </div>
-  <div class="doc-title">Mission Roadmap — Stardate 2025.04 → 2025.11</div>
-  <div class="doc-meta">
-    <div class="doc-meta-item"><strong>Duration:</strong> 7 months</div>
-    <div class="doc-meta-item"><strong>Phases:</strong> 6</div>
-    <div class="doc-meta-item"><strong>Total Items:</strong> 14</div>
-    <div class="doc-meta-item"><strong>Parallel Sprints:</strong> A+B &amp; E1+E2</div>
-    <div class="doc-meta-item"><strong>Target:</strong> Nov 01 2025</div>
-  </div>
-</div>
+<div class="corner-tl"></div>
+<div class="corner-br"></div>
 
-<!-- ═══ TIMELINE RULER ═══ -->
-<div class="section-div">
-  <div class="section-div-line"></div>
-  <div class="section-div-label">Timeline Overview</div>
-  <div class="section-div-line"></div>
-</div>
+<div class="shell">
 
-<div class="timeline-strip">
-  <div class="ts-cell active"><span class="ts-mo">APR</span>01 Apr</div>
-  <div class="ts-cell"><span class="ts-mo">MAY</span>01 May</div>
-  <div class="ts-cell"><span class="ts-mo">JUN</span>01 Jun</div>
-  <div class="ts-cell"><span class="ts-mo">JUL</span>01 Jul</div>
-  <div class="ts-cell"><span class="ts-mo">AUG</span>01 Aug</div>
-  <div class="ts-cell"><span class="ts-mo">SEP</span>01 Sep</div>
-  <div class="ts-cell"><span class="ts-mo">OCT</span>01 Oct</div>
-</div>
+  <!-- TOP HUD -->
+  <header class="hud-top">
+    <div class="logo-block">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,2 18,7 18,13 10,18 2,13 2,7" stroke="#e8621a" stroke-width="1.2" fill="none"/>
+          <circle cx="10" cy="10" r="2.5" fill="#e8621a" opacity="0.8"/>
+          <line x1="10" y1="4" x2="10" y2="7.5" stroke="#e8621a" stroke-width="0.8"/>
+          <line x1="10" y1="12.5" x2="10" y2="16" stroke="#e8621a" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">POWERCORP</div>
+        <div class="logo-sub">byteZorro Games — Dev Build</div>
+      </div>
+    </div>
 
-<!-- parallel A+B -->
-<div class="parallel-group">
-  <!-- Phase A bar -->
-  <div class="phase-bar">
-    <div class="phase-bar-fill theme-a col-1">
-      <div class="bar-code">Phase-A · Horizon Zero</div>
-      <div class="bar-title">Core Systems</div>
-      <div class="bar-sub">Menu · Save/Load · NavMap → 3D · Scene Templates</div>
+    <div class="hud-center">
+      <div class="hud-title">Mission Roadmap — Stardate 2025.04–2025.11</div>
+      <div class="hud-subtitle">Classification: Internal / Development Only</div>
     </div>
-  </div>
-  <!-- Phase B bar -->
-  <div class="phase-bar">
-    <div class="phase-bar-fill theme-b col-1">
-      <div class="bar-code">Phase-B · Dark Matter</div>
-      <div class="bar-title">Flight &amp; New Assets</div>
-      <div class="bar-sub">3D Flight · Ships · Stations · Solar System</div>
-    </div>
-  </div>
-</div>
 
-<!-- Phase C -->
-<div class="phase-bar phase-block">
-  <div class="phase-bar-fill theme-c col-2">
-    <div class="bar-code">Phase-C · Void Pulse</div>
-    <div class="bar-title">Immersion Layer</div>
-    <div class="bar-sub">Sound FX · Music · Tutorial · AI Terminal</div>
-  </div>
-</div>
+    <div class="hud-status">
+      <div class="stat-chip">
+        <span>Phases</span>
+        <span class="val">06</span>
+      </div>
+      <div class="stat-chip">
+        <span>Items</span>
+        <span class="val">14</span>
+      </div>
+      <div class="stat-chip">
+        <span>Duration</span>
+        <span class="val">7mo</span>
+      </div>
+      <div class="pulse-dot"></div>
+    </div>
+  </header>
 
-<!-- Phase D -->
-<div class="phase-bar phase-block">
-  <div class="phase-bar-fill theme-d col-3">
-    <div class="bar-code">Phase-D · Singularity Arc</div>
-    <div class="bar-title">Milestone 0 + NavMap</div>
-    <div class="bar-sub">Asteroid Belt · Docking M1 · Hypersleep</div>
-  </div>
-</div>
+  <!-- MAIN GRID -->
+  <div class="main">
 
-<!-- parallel E1+E2 -->
-<div class="parallel-group">
-  <div class="phase-bar">
-    <div class="phase-bar-fill theme-e1 col-4-8">
-      <div class="bar-code">Phase-E1 · Starfall Epoch</div>
-      <div class="bar-title">StarLog &amp; History</div>
-      <div class="bar-sub">History Manager · StarLog · Terminal Diary · Comms</div>
-    </div>
-  </div>
-  <div class="phase-bar">
-    <div class="phase-bar-fill theme-e2 col-4-8">
-      <div class="bar-code">Phase-E2 · Event Horizon</div>
-      <div class="bar-title">Mechanics &amp; Rebalance</div>
-      <div class="bar-sub">Comms Intercept · Repair · Destruction · Power</div>
-    </div>
-  </div>
-</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section-label">Mission Phases</div>
 
-<!-- ═══ LEGEND ═══ -->
-<div class="legend" style="margin-top:12px;">
-  <div class="legend-item"><div class="legend-pip" style="background:#2a5cb8;"></div>Core Systems</div>
-  <div class="legend-item"><div class="legend-pip" style="background:#1a8a50;"></div>Flight &amp; Assets</div>
-  <div class="legend-item"><div class="legend-pip" style="background:#b82a6e;"></div>Immersion</div>
-  <div class="legend-item"><div class="legend-pip" style="background:#b88a1a;"></div>Milestones</div>
-  <div class="legend-item"><div class="legend-pip" style="background:#7a2ab8;"></div>Narrative</div>
-  <div class="legend-item"><div class="legend-pip" style="background:#1a7ab8;"></div>Mechanics</div>
-</div>
+      <div class="phase-entry active" data-id="a" onclick="selectPhase('a', this)">
+        <div class="pe-code">PHASE-A · M01</div>
+        <div class="pe-name">Horizon Zero</div>
+        <div class="pe-dates">Apr 01 – May 01</div>
+        <span class="pe-badge parallel">∥ Parallel</span>
+      </div>
 
-<!-- ═══ TASK MANIFESTS ═══ -->
-<div class="section-div">
-  <div class="section-div-line"></div>
-  <div class="section-div-label">Task Manifests</div>
-  <div class="section-div-line"></div>
-</div>
+      <div class="phase-entry" data-id="b" onclick="selectPhase('b', this)">
+        <div class="pe-code">PHASE-B · M01</div>
+        <div class="pe-name">Dark Matter</div>
+        <div class="pe-dates">Apr 01 – May 01</div>
+        <span class="pe-badge parallel">∥ Parallel</span>
+      </div>
 
-<!-- A -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#8ab8ff;">Phase-A · Horizon Zero — Core Systems</div>
-      <div class="manifest-header-count">Apr 01 – May 01 · ∥ Parallel</div>
-    </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">Navigation &amp; UI</div>
-        <div class="mg-task">Main Menu</div>
-        <div class="mg-task">Save / Load System</div>
-        <div class="mg-task">NavMap → 3D Location Transition</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Scene Templates</div>
-        <div class="mg-task">Deep Space Template</div>
-        <div class="mg-task">Inside SOI Template</div>
-        <div class="mg-task">Outside SOI / Near Station Template</div>
-      </div>
-      <div class="manifest-group" style="grid-column:1/-1; border-right:none;">
-        <div class="mg-label">Core Manager</div>
-        <div class="mg-task">SpaceSceneInstantiatorManager — reads NavMap data, instantiates correct 3D scene</div>
-      </div>
-    </div>
-  </div>
-</div>
+      <div class="sidebar-divider"></div>
 
-<!-- B -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#6adfa8;">Phase-B · Dark Matter — Flight &amp; New Assets</div>
-      <div class="manifest-header-count">Apr 01 – May 01 · ∥ Parallel</div>
-    </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">Flight Systems</div>
-        <div class="mg-task">3D New Flight Test</div>
-        <div class="mg-task">Cockpit View Prototype</div>
+      <div class="phase-entry" data-id="c" onclick="selectPhase('c', this)">
+        <div class="pe-code">PHASE-C · M02</div>
+        <div class="pe-name">Void Pulse</div>
+        <div class="pe-dates">May 01 – Jun 01</div>
+        <span class="pe-badge seq">Sequential</span>
       </div>
-      <div class="manifest-group">
-        <div class="mg-label">New Ships</div>
-        <div class="mg-task">New Ship Model</div>
-        <div class="mg-task">Cockpit View Integration</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Environment Assets</div>
-        <div class="mg-task">Derelicts: Satellites &amp; Probes</div>
-        <div class="mg-task">M1 Space Station (new)</div>
-        <div class="mg-task">Miscellaneous Stations</div>
-        <div class="mg-task">New Asteroid Models</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Solar System</div>
-        <div class="mg-task">3D Sun</div>
-        <div class="mg-task">All Planets</div>
-        <div class="mg-task">Moons per Planet</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- C -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#ff8ab8;">Phase-C · Void Pulse — Immersion Layer</div>
-      <div class="manifest-header-count">May 01 – Jun 01 · Sequential</div>
-    </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">Audio</div>
-        <div class="mg-task">Sound FX: RCS Thruster</div>
-        <div class="mg-task">Sound FX: Main Engine</div>
-        <div class="mg-task">Sound FX: G-Force Stress</div>
-        <div class="mg-task">Sound FX: Collisions</div>
-        <div class="mg-task">Music System — Ambient &amp; Dynamic</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Tutorial Intro</div>
-        <div class="mg-task">Immersive UI Tooltips System</div>
-        <div class="mg-task">AI Assist via Terminal with Objectives</div>
-        <div class="mg-task">Full Intro-as-Tutorial Sequence</div>
-      </div>
-    </div>
-  </div>
-</div>
+      <div class="sidebar-divider"></div>
 
-<!-- D -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#ffd880;">Phase-D · Singularity Arc — Milestone 0 + NavMap</div>
-      <div class="manifest-header-count">Jun 01 – Jul 01 · Sequential</div>
-    </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">Milestone 0 — Tutorial</div>
-        <div class="mg-task">Add Asteroid Belt to Game World</div>
-        <div class="mg-task">Asteroid Belt Playable &amp; Traversable</div>
+      <div class="phase-entry" data-id="d" onclick="selectPhase('d', this)">
+        <div class="pe-code">PHASE-D · M03</div>
+        <div class="pe-name">Singularity Arc</div>
+        <div class="pe-dates">Jun 01 – Jul 01</div>
+        <span class="pe-badge seq">Sequential</span>
       </div>
-      <div class="manifest-group">
-        <div class="mg-label">Navigation</div>
-        <div class="mg-task">Full NavMap Travel: M0 → M1</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Milestone 1</div>
-        <div class="mg-task">Spinning Station Docking Mechanic</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Ship Systems</div>
-        <div class="mg-task">Hypersleep Manager Implementation</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- E1 -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#c88aff;">Phase-E1 · Starfall Epoch — StarLog &amp; History</div>
-      <div class="manifest-header-count">Jul 01 – Nov 01 · ∥ Parallel · 4 months</div>
-    </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">History Manager</div>
-        <div class="mg-task">History Manager System Architecture</div>
-        <div class="mg-task">StarLog Manager</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">StarLog Terminal</div>
-        <div class="mg-task">Terminal Diary UI — Comms, Notes, Entries</div>
-        <div class="mg-task">Auto-Register Comms / Events to Log</div>
-        <div class="mg-task">StarLog Addon Integration</div>
-      </div>
-    </div>
-  </div>
-</div>
+      <div class="sidebar-divider"></div>
 
-<!-- E2 -->
-<div class="phase-block">
-  <div class="manifest">
-    <div class="manifest-header">
-      <div class="manifest-header-title" style="color:#80c8ff;">Phase-E2 · Event Horizon — Mechanics &amp; Rebalance</div>
-      <div class="manifest-header-count">Jul 01 – Nov 01 · ∥ Parallel · 4 months</div>
+      <div class="phase-entry" data-id="e1" onclick="selectPhase('e1', this)">
+        <div class="pe-code">PHASE-E1 · M04–07</div>
+        <div class="pe-name">Starfall Epoch</div>
+        <div class="pe-dates">Jul 01 – Nov 01</div>
+        <span class="pe-badge parallel">∥ Parallel</span>
+      </div>
+
+      <div class="phase-entry" data-id="e2" onclick="selectPhase('e2', this)">
+        <div class="pe-code">PHASE-E2 · M04–07</div>
+        <div class="pe-name">Event Horizon</div>
+        <div class="pe-dates">Jul 01 – Nov 01</div>
+        <span class="pe-badge parallel">∥ Parallel</span>
+      </div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" style="margin-top:auto;">Legend</div>
+
+      <div style="padding: 0 16px 12px; display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#2a5cb8;border-radius:1px;flex-shrink:0;"></div> Core Systems
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#1a8a50;border-radius:1px;flex-shrink:0;"></div> Flight &amp; Assets
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#b82a6e;border-radius:1px;flex-shrink:0;"></div> Immersion
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#b88a1a;border-radius:1px;flex-shrink:0;"></div> Milestones
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#7a2ab8;border-radius:1px;flex-shrink:0;"></div> Narrative
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:8px;color:var(--textlow);">
+          <div style="width:12px;height:4px;background:#1a7ab8;border-radius:1px;flex-shrink:0;"></div> Mechanics
+        </div>
+      </div>
+    </aside>
+
+    <!-- TIMELINE -->
+    <div class="timeline-panel">
+      <div class="month-ruler">
+        <div class="month-cell current">
+          <div class="m-num">APR</div>
+          <div>01 Apr – 30 Apr</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">MAY</div>
+          <div>01 May – 31 May</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">JUN</div>
+          <div>01 Jun – 30 Jun</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">JUL</div>
+          <div>01 Jul – 31 Jul</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">AUG</div>
+          <div>01 Aug – 31 Aug</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">SEP</div>
+          <div>01 Sep – 30 Sep</div>
+        </div>
+        <div class="month-cell">
+          <div class="m-num">OCT</div>
+          <div>01 Oct – 31 Oct</div>
+        </div>
+      </div>
+
+      <div class="grid-area">
+        <div class="grid-lines">
+          <div class="grid-line"></div><div class="grid-line"></div>
+          <div class="grid-line"></div><div class="grid-line"></div>
+          <div class="grid-line"></div><div class="grid-line"></div>
+          <div class="grid-line"></div>
+        </div>
+
+        <!-- PARALLEL BLOCK A+B label -->
+        <div class="track-row" style="min-height:20px;">
+          <div class="row-group-label">
+            <span>∥ Parallel Sprint — Phase A &amp; B</span>
+          </div>
+        </div>
+
+        <!-- Track A -->
+        <div class="track-row">
+          <div class="mission-bar bar-a" style="grid-column: 1 / 2;"
+               onclick="openModal('a')">
+            <div class="bar-code">PHASE-A · HORIZON ZERO</div>
+            <div class="bar-name">Core Systems</div>
+            <div class="bar-tasks">Menu · Save/Load · NavMap → 3D · Scene Templates</div>
+          </div>
+        </div>
+
+        <!-- Track B -->
+        <div class="track-row">
+          <div class="mission-bar bar-b" style="grid-column: 1 / 2;"
+               onclick="openModal('b')">
+            <div class="bar-code">PHASE-B · DARK MATTER</div>
+            <div class="bar-name">Flight &amp; New Assets</div>
+            <div class="bar-tasks">3D Flight · Ships · Stations · Solar System</div>
+          </div>
+        </div>
+
+        <!-- C label -->
+        <div class="track-row" style="min-height:20px;margin-top:6px;">
+          <div class="row-group-label"><span>Sequential — Phase C</span></div>
+        </div>
+        <!-- Track C -->
+        <div class="track-row">
+          <div class="mission-bar bar-c" style="grid-column: 2 / 3;"
+               onclick="openModal('c')">
+            <div class="bar-code">PHASE-C · VOID PULSE</div>
+            <div class="bar-name">Immersion Layer</div>
+            <div class="bar-tasks">Sound FX · Music · Tutorial · AI Terminal</div>
+          </div>
+        </div>
+
+        <!-- D label -->
+        <div class="track-row" style="min-height:20px;margin-top:6px;">
+          <div class="row-group-label"><span>Sequential — Phase D</span></div>
+        </div>
+        <!-- Track D -->
+        <div class="track-row">
+          <div class="mission-bar bar-d" style="grid-column: 3 / 4;"
+               onclick="openModal('d')">
+            <div class="bar-code">PHASE-D · SINGULARITY ARC</div>
+            <div class="bar-name">Milestone 0 + NavMap</div>
+            <div class="bar-tasks">Asteroid Belt · Docking M1 · Hypersleep</div>
+          </div>
+        </div>
+
+        <!-- E label -->
+        <div class="track-row" style="min-height:20px;margin-top:6px;">
+          <div class="row-group-label"><span>∥ Parallel Sprint — Phase E1 &amp; E2</span></div>
+        </div>
+        <!-- Track E1 -->
+        <div class="track-row">
+          <div class="mission-bar bar-e1" style="grid-column: 4 / 8;"
+               onclick="openModal('e1')">
+            <div class="bar-code">PHASE-E1 · STARFALL EPOCH</div>
+            <div class="bar-name">StarLog &amp; History</div>
+            <div class="bar-tasks">History Manager · StarLog · Terminal Diary · Comms</div>
+          </div>
+        </div>
+        <!-- Track E2 -->
+        <div class="track-row">
+          <div class="mission-bar bar-e2" style="grid-column: 4 / 8;"
+               onclick="openModal('e2')">
+            <div class="bar-code">PHASE-E2 · EVENT HORIZON</div>
+            <div class="bar-name">Mechanics &amp; Balance</div>
+            <div class="bar-tasks">Comms Intercept · Repair · Destruction · Power Rebalance</div>
+          </div>
+        </div>
+
+      </div><!-- /grid-area -->
+    </div><!-- /timeline-panel -->
+  </div><!-- /main -->
+
+  <!-- DETAIL STRIP -->
+  <div class="detail-strip" id="detail-strip">
+    <div class="detail-placeholder" id="detail-placeholder">
+      SELECT A PHASE TO VIEW TASK MANIFEST_
     </div>
-    <div class="manifest-body">
-      <div class="manifest-group">
-        <div class="mg-label">New Mechanics</div>
-        <div class="mg-task">Comm Interception Mechanic</div>
-        <div class="mg-task">Repair Ship Mechanic</div>
-        <div class="mg-task">Ship INERTIA + Auto-Stabilizer</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Modular Destruction</div>
-        <div class="mg-task">RCS Tank Destruction</div>
-        <div class="mg-task">O2 Tank Destruction</div>
-        <div class="mg-task">Fluid Leakage Simulation</div>
-        <div class="mg-task">Explosion System</div>
-        <div class="mg-task">Atmosphere Breach</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Improvements</div>
-        <div class="mg-task">Docking PAPI — Space Version + Soft Dampener</div>
-        <div class="mg-task">RADAR — Mark Visited POIs as Done</div>
-        <div class="mg-task">Shield Regeneration Procedure</div>
-      </div>
-      <div class="manifest-group">
-        <div class="mg-label">Rebalance</div>
-        <div class="mg-task">Power Consumption Rebalance — All Systems</div>
-      </div>
+    <div id="detail-content" style="display:none; width:100%; display:none; gap:28px; align-items:flex-start;" class="detail-inner-flex">
+      <div class="detail-header" id="d-header"></div>
+      <div class="detail-divider"></div>
+      <div class="detail-tasks" id="d-tasks"></div>
     </div>
   </div>
-</div>
 
-<!-- ═══ FOOTER ═══ -->
-<div class="doc-footer">
-  <div class="doc-footer-left">POWERCORP · byteZorro Games · Dev Roadmap Rev.1 · 2025</div>
-  <div class="power-bar">
-    <div class="power-seg"></div><div class="power-seg"></div>
-    <div class="power-seg"></div><div class="power-seg"></div>
-    <div class="power-seg"></div><div class="power-seg"></div>
-    <div class="power-seg"></div><div class="power-seg"></div>
-    <div class="power-seg"></div><div class="power-seg"></div>
+  <!-- BOTTOM HUD -->
+  <footer class="hud-bottom">
+    <div class="hud-bottom-item">
+      <span class="key">CLICK</span>
+      <span>Select phase / Open detail</span>
+    </div>
+    <div class="hud-bottom-item">
+      <div class="power-bar">
+        <div class="power-seg"></div><div class="power-seg"></div>
+        <div class="power-seg"></div><div class="power-seg"></div>
+        <div class="power-seg"></div><div class="power-seg"></div>
+        <div class="power-seg"></div><div class="power-seg"></div>
+        <div class="power-seg"></div><div class="power-seg"></div>
+      </div>
+      <span>Reactor nominal</span>
+    </div>
+    <div class="hud-bottom-item">
+      <span>byteZorro Games · PowerCorp v0.1 Alpha</span>
+    </div>
+  </footer>
+
+</div><!-- /shell -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">[ ESC ]</button>
+    <div class="modal-header">
+      <div class="modal-code" id="m-code"></div>
+      <div class="modal-title" id="m-title"></div>
+      <div class="modal-meta" id="m-meta"></div>
+    </div>
+    <div class="modal-body" id="m-body"></div>
   </div>
 </div>
 
+<script>
+const PHASES = {
+  a: {
+    code: 'PHASE-A · HORIZON ZERO',
+    name: 'Core Systems',
+    dates: 'Apr 01 – May 01 · 1 Month',
+    parallel: true,
+    color: '#8ab8ff',
+    groups: [
+      {
+        label: 'Navigation & UI',
+        tasks: ['Main Menu', 'Save / Load System', 'NavMap Location → 3D Location Transition']
+      },
+      {
+        label: 'Scene Templates',
+        tasks: ['Deep Space Template', 'Inside SOI Template', 'Outside SOI / Near Station Template']
+      },
+      {
+        label: 'Core Manager',
+        tasks: ['SpaceSceneInstantiatorManager — reads NavMap data and instantiates correct 3D scene']
+      }
+    ]
+  },
+  b: {
+    code: 'PHASE-B · DARK MATTER',
+    name: 'Flight & New Assets',
+    dates: 'Apr 01 – May 01 · 1 Month',
+    parallel: true,
+    color: '#6adfa8',
+    groups: [
+      {
+        label: 'Flight Systems',
+        tasks: ['3D New Flight Test', 'Cockpit View Prototype']
+      },
+      {
+        label: 'New Ships',
+        tasks: ['New Ship Model', 'Cockpit View Integration']
+      },
+      {
+        label: 'New Environment Assets',
+        tasks: ['Derelicts: Satellites & Probes', 'M1 Space Station (new)', 'Miscellaneous Stations', 'New Asteroid Models']
+      },
+      {
+        label: 'Solar System',
+        tasks: ['3D Sun', 'Planets (all)', 'Moons per planet']
+      }
+    ]
+  },
+  c: {
+    code: 'PHASE-C · VOID PULSE',
+    name: 'Immersion Layer',
+    dates: 'May 01 – Jun 01 · 1 Month',
+    parallel: false,
+    color: '#ff8ab8',
+    groups: [
+      {
+        label: 'Audio',
+        tasks: ['Sound FX: RCS thruster', 'Sound FX: Main engine', 'Sound FX: G-force stress', 'Sound FX: Collisions', 'Music system — ambient & dynamic']
+      },
+      {
+        label: 'Tutorial Intro',
+        tasks: ['Immersive UI Tooltips system', 'AI assist via terminal with objectives', 'Full intro-as-tutorial sequence']
+      }
+    ]
+  },
+  d: {
+    code: 'PHASE-D · SINGULARITY ARC',
+    name: 'Milestone 0 + NavMap',
+    dates: 'Jun 01 – Jul 01 · 1 Month',
+    parallel: false,
+    color: '#ffd880',
+    groups: [
+      {
+        label: 'Milestone 0 — Tutorial',
+        tasks: ['Add Asteroid Belt to game world', 'Asteroid Belt playable & traversable']
+      },
+      {
+        label: 'Navigation',
+        tasks: ['Full NavMap capability: travel from M0 to M1']
+      },
+      {
+        label: 'Milestone 1',
+        tasks: ['Spinning station docking mechanic']
+      },
+      {
+        label: 'Ship Systems',
+        tasks: ['Hypersleep Manager implementation']
+      }
+    ]
+  },
+  e1: {
+    code: 'PHASE-E1 · STARFALL EPOCH',
+    name: 'StarLog & History',
+    dates: 'Jul 01 – Nov 01 · 4 Months',
+    parallel: true,
+    color: '#c88aff',
+    groups: [
+      {
+        label: 'History Manager',
+        tasks: ['History Manager system architecture', 'StarLog Manager']
+      },
+      {
+        label: 'StarLog Terminal',
+        tasks: ['Terminal diary UI — comms, notes, diary entries', 'Auto-register comms/events to log', 'StarLog addon integration']
+      }
+    ]
+  },
+  e2: {
+    code: 'PHASE-E2 · EVENT HORIZON',
+    name: 'Mechanics & Rebalance',
+    dates: 'Jul 01 – Nov 01 · 4 Months',
+    parallel: true,
+    color: '#80c8ff',
+    groups: [
+      {
+        label: 'New Game Mechanics',
+        tasks: ['Comm Interception mechanic', 'Repair Ship mechanic', 'Ship INERTIA + Auto-stabilizer']
+      },
+      {
+        label: 'Modular Destruction',
+        tasks: ['RCS Tank destruction', 'O2 Tank destruction', 'Fluid leakage simulation', 'Explosion system', 'Atmosphere breach']
+      },
+      {
+        label: 'Improvements',
+        tasks: ['Docking Assistance PAPI — space version with soft dampener', 'RADAR — mark visited POIs as DONE', 'Shield regeneration procedure']
+      },
+      {
+        label: 'Rebalance',
+        tasks: ['Power consumption rebalance across all systems']
+      }
+    ]
+  }
+};
+
+function selectPhase(id, el) {
+  document.querySelectorAll('.phase-entry').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+
+  const p = PHASES[id];
+  document.getElementById('detail-placeholder').style.display = 'none';
+
+  const content = document.getElementById('detail-content');
+  content.style.display = 'flex';
+
+  const hdr = document.getElementById('d-header');
+  hdr.innerHTML = `
+    <div class="detail-code">${p.code}</div>
+    <div class="detail-name" style="color:${p.color}">${p.name}</div>
+    <div class="detail-dates">${p.dates}</div>
+    ${p.parallel ? '<span class="detail-parallel-tag">∥ PARALLEL EXECUTION</span>' : ''}
+  `;
+
+  const tasks = document.getElementById('d-tasks');
+  const allTasks = p.groups.flatMap(g => g.tasks);
+  tasks.innerHTML = allTasks.map(t => `<div class="task-item">${t}</div>`).join('');
+}
+
+function openModal(id) {
+  const p = PHASES[id];
+  document.getElementById('m-code').textContent = p.code;
+  document.getElementById('m-title').style.color = p.color;
+  document.getElementById('m-title').textContent = p.name;
+  document.getElementById('m-meta').innerHTML = `
+    <span>${p.dates}</span>
+    ${p.parallel ? '<span style="color:var(--cyan)">∥ Parallel Execution</span>' : '<span style="color:var(--textmid)">Sequential</span>'}
+  `;
+
+  const body = document.getElementById('m-body');
+  body.innerHTML = p.groups.map((g, gi) => `
+    <div class="modal-task-group">
+      <div class="modal-task-group-label">${g.label}</div>
+      ${g.tasks.map((t, ti) => `
+        <div class="modal-task">
+          <span class="modal-task-idx">${String(gi * 10 + ti + 1).padStart(2,'0')}</span>
+          <span>${t}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Select first phase by default
+selectPhase('a', document.querySelector('[data-id="a"]'));
+</script>
 </body>
 </html>
