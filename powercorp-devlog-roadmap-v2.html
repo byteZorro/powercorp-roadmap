@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerCorp — Dev Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #050810;
+    --bg2:      #080d1a;
+    --bg3:      #0c1220;
+    --border:   #1a2540;
+    --border2:  #243060;
+
+    --orange:   #e8621a;
+    --orange2:  #ff8040;
+    --oglow:    rgba(232,98,26,0.18);
+
+    --cyan:     #2ae8d0;
+    --text:     #c8d4f0;
+    --textmid:  #7890b8;
+    --textlow:  #3a4a6a;
+
+    --mono:     'Share Tech Mono', monospace;
+    --display:  'Orbitron', sans-serif;
+    --body:     'Rajdhani', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    padding: 32px 24px 60px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* scanlines */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── HEADER ── */
+  .doc-header {
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--orange);
+    background: var(--bg2);
+    padding: 22px 24px 18px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at top right, rgba(232,98,26,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .doc-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .doc-logo {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: var(--orange2);
+  }
+  .doc-logo span {
+    display: block;
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--textmid);
+    letter-spacing: 0.2em;
+    font-weight: 400;
+    margin-top: 3px;
+  }
+  .doc-classification {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--orange);
+    letter-spacing: 0.2em;
+    border: 1px solid var(--orange);
+    padding: 3px 8px;
+    opacity: 0.7;
+    align-self: flex-start;
+  }
+  .doc-title {
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .doc-meta-item {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.1em;
+  }
+  .doc-meta-item strong {
+    color: var(--textmid);
+    font-weight: 400;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 28px 0 16px;
+  }
+  .section-div-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-div-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--textlow);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── TIMELINE STRIP ── */
+  .timeline-strip {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+    background: var(--bg2);
+  }
+  .ts-cell {
+    padding: 6px 8px;
+    border-right: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--textlow);
+    letter-spacing: 0.1em;
+  }
+  .ts-cell:last-child { border-right: none; }
+  .ts-cell .ts-mo {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--textmid);
+    letter-spacing: 0.1em;
+    display: block;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .ts-cell.active .ts-mo { color: var(--orange); }
+  .ts-cell.active { background: rgba(232,98,26,0.06); }
+
+  /* ── PHASE BLOCK ── */
+  .phase-block {
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  /* parallel group wrapper */
+  .parallel-group {
+    border: 1px dashed var(--border2);
+    padding: 8px 8px 4px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .parallel-group::before {
+    content: '∥ PARALLEL EXECUTION';
+    position: absolute;
+    top: -8px; left: 12px;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    padding: 0 6px;
+    opacity: 0.7;
+  }
+
+  .phase-bar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+    height: 62px;
+    position: relative;
+  }
+
+  .phase-bar-fill {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 12px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+    border-left: 3px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-bar-fill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 5px,
+      rgba(255,255,255,0.015) 5px, rgba(255,255,255,0.015) 10px
+    );
+  }
+  /* top shine line */
+  .phase-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, currentColor, transparent 60%);
+    opacity: 0.25;
+  }
+
+  .bar-code {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.14em;
+    opacity: 0.55;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .bar-title {
+    font-family: var(--display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    position: relative;
+  }
+  .bar-sub {
+    font-family: var(--mono);
+    font-size: 8px;
+    opacity: 0.5;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+  }
+
+  /* color themes */
+  .theme-a  { background: #0b1828; border-color: #2a5cb8; color: #8ab8ff; }
+  .theme-b  { background: #0a1e14; border-color: #1a8a50; color: #6adfa8; }
+  .theme-c  { background: #1c0f0c; border-color: #b82a6e; color: #ff8ab8; }
+  .theme-d  { background: #1c1708; border-color: #b88a1a; color: #ffd880; }
+  .theme-e1 { background: #140a22; border-color: #7a2ab8; color: #c88aff; }
+  .theme-e2 { background: #07121e; border-color: #1a7ab8; color: #80c8ff; }
+
+  /* span helpers */
+  .col-1 { grid-column: 1 / 2; }
+  .col-2 { grid-column: 2 / 3; }
+  .col-3 { grid-column: 3 / 4; }
+  .col-4-8 { grid-column: 4 / 8; }
+
+  /* ── TASK MANIFEST ── */
+  .manifest {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    margin-bottom: 10px;
+  }
+  .manifest-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .manifest-header-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .manifest-header-count {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--orange);
+    letter-spacing: 0.1em;
+  }
+
+  .manifest-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 600px) {
+    .manifest-body { grid-template-columns: 1fr; }
+  }
+
+  .manifest-group {
+    padding: 10px 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .manifest-group:nth-child(even) { border-right: none; }
+  .manifest-group:nth-last-child(-n+2) { border-bottom: none; }
+  /* single-column fallback */
+  .manifest-body.single .manifest-group { border-right: none; grid-column: 1/-1; }
+
+  .mg-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--orange);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--oglow);
+  }
+  .mg-task {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--textmid);
+    line-height: 1.85;
+  }
+  .mg-task::before {
+    content: '›';
+    color: var(--orange);
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .doc-footer-left {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--textlow);
+    letter-spacing: 0.12em;
+  }
+  .power-bar {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .power-seg {
+    width: 8px; height: 5px;
+    background: var(--orange);
+  }
+  .power-seg:nth-child(n+7) { opacity: 0.2; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--textlow);
+    letter-spacing: 0.08em;
+  }
+  .legend-pip {
+    width: 18px; height: 4px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  /* staggered fade-in — CSS only */
+  .phase-block { animation: fadeUp 0.5s ease both; }
+  .phase-block:nth-child(1) { animation-delay: 0.05s; }
+  .phase-block:nth-child(2) { animation-delay: 0.10s; }
+  .phase-block:nth-child(3) { animation-delay: 0.15s; }
+  .phase-block:nth-child(4) { animation-delay: 0.20s; }
+  .phase-block:nth-child(5) { animation-delay: 0.25s; }
+  .phase-block:nth-child(6) { animation-delay: 0.30s; }
+  .parallel-group { animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="doc-header">
+  <div class="doc-header-top">
+    <div class="doc-logo">
+      POWERCORP
+      <span>byteZorro Games · Development Document</span>
+    </div>
+    <div class="doc-classification">INTERNAL / DEV ROADMAP</div>
+  </div>
+  <div class="doc-title">Mission Roadmap — Stardate 2025.04 → 2025.11</div>
+  <div class="doc-meta">
+    <div class="doc-meta-item"><strong>Duration:</strong> 7 months</div>
+    <div class="doc-meta-item"><strong>Phases:</strong> 6</div>
+    <div class="doc-meta-item"><strong>Total Items:</strong> 14</div>
+    <div class="doc-meta-item"><strong>Parallel Sprints:</strong> A+B &amp; E1+E2</div>
+    <div class="doc-meta-item"><strong>Target:</strong> Nov 01 2025</div>
+  </div>
+</div>
+
+<!-- ═══ TIMELINE RULER ═══ -->
+<div class="section-div">
+  <div class="section-div-line"></div>
+  <div class="section-div-label">Timeline Overview</div>
+  <div class="section-div-line"></div>
+</div>
+
+<div class="timeline-strip">
+  <div class="ts-cell active"><span class="ts-mo">APR</span>01 Apr</div>
+  <div class="ts-cell"><span class="ts-mo">MAY</span>01 May</div>
+  <div class="ts-cell"><span class="ts-mo">JUN</span>01 Jun</div>
+  <div class="ts-cell"><span class="ts-mo">JUL</span>01 Jul</div>
+  <div class="ts-cell"><span class="ts-mo">AUG</span>01 Aug</div>
+  <div class="ts-cell"><span class="ts-mo">SEP</span>01 Sep</div>
+  <div class="ts-cell"><span class="ts-mo">OCT</span>01 Oct</div>
+</div>
+
+<!-- parallel A+B -->
+<div class="parallel-group">
+  <!-- Phase A bar -->
+  <div class="phase-bar">
+    <div class="phase-bar-fill theme-a col-1">
+      <div class="bar-code">Phase-A · Horizon Zero</div>
+      <div class="bar-title">Core Systems</div>
+      <div class="bar-sub">Menu · Save/Load · NavMap → 3D · Scene Templates</div>
+    </div>
+  </div>
+  <!-- Phase B bar -->
+  <div class="phase-bar">
+    <div class="phase-bar-fill theme-b col-1">
+      <div class="bar-code">Phase-B · Dark Matter</div>
+      <div class="bar-title">Flight &amp; New Assets</div>
+      <div class="bar-sub">3D Flight · Ships · Stations · Solar System</div>
+    </div>
+  </div>
+</div>
+
+<!-- Phase C -->
+<div class="phase-bar phase-block">
+  <div class="phase-bar-fill theme-c col-2">
+    <div class="bar-code">Phase-C · Void Pulse</div>
+    <div class="bar-title">Immersion Layer</div>
+    <div class="bar-sub">Sound FX · Music · Tutorial · AI Terminal</div>
+  </div>
+</div>
+
+<!-- Phase D -->
+<div class="phase-bar phase-block">
+  <div class="phase-bar-fill theme-d col-3">
+    <div class="bar-code">Phase-D · Singularity Arc</div>
+    <div class="bar-title">Milestone 0 + NavMap</div>
+    <div class="bar-sub">Asteroid Belt · Docking M1 · Hypersleep</div>
+  </div>
+</div>
+
+<!-- parallel E1+E2 -->
+<div class="parallel-group">
+  <div class="phase-bar">
+    <div class="phase-bar-fill theme-e1 col-4-8">
+      <div class="bar-code">Phase-E1 · Starfall Epoch</div>
+      <div class="bar-title">StarLog &amp; History</div>
+      <div class="bar-sub">History Manager · StarLog · Terminal Diary · Comms</div>
+    </div>
+  </div>
+  <div class="phase-bar">
+    <div class="phase-bar-fill theme-e2 col-4-8">
+      <div class="bar-code">Phase-E2 · Event Horizon</div>
+      <div class="bar-title">Mechanics &amp; Rebalance</div>
+      <div class="bar-sub">Comms Intercept · Repair · Destruction · Power</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEGEND ═══ -->
+<div class="legend" style="margin-top:12px;">
+  <div class="legend-item"><div class="legend-pip" style="background:#2a5cb8;"></div>Core Systems</div>
+  <div class="legend-item"><div class="legend-pip" style="background:#1a8a50;"></div>Flight &amp; Assets</div>
+  <div class="legend-item"><div class="legend-pip" style="background:#b82a6e;"></div>Immersion</div>
+  <div class="legend-item"><div class="legend-pip" style="background:#b88a1a;"></div>Milestones</div>
+  <div class="legend-item"><div class="legend-pip" style="background:#7a2ab8;"></div>Narrative</div>
+  <div class="legend-item"><div class="legend-pip" style="background:#1a7ab8;"></div>Mechanics</div>
+</div>
+
+<!-- ═══ TASK MANIFESTS ═══ -->
+<div class="section-div">
+  <div class="section-div-line"></div>
+  <div class="section-div-label">Task Manifests</div>
+  <div class="section-div-line"></div>
+</div>
+
+<!-- A -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#8ab8ff;">Phase-A · Horizon Zero — Core Systems</div>
+      <div class="manifest-header-count">Apr 01 – May 01 · ∥ Parallel</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">Navigation &amp; UI</div>
+        <div class="mg-task">Main Menu</div>
+        <div class="mg-task">Save / Load System</div>
+        <div class="mg-task">NavMap → 3D Location Transition</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Scene Templates</div>
+        <div class="mg-task">Deep Space Template</div>
+        <div class="mg-task">Inside SOI Template</div>
+        <div class="mg-task">Outside SOI / Near Station Template</div>
+      </div>
+      <div class="manifest-group" style="grid-column:1/-1; border-right:none;">
+        <div class="mg-label">Core Manager</div>
+        <div class="mg-task">SpaceSceneInstantiatorManager — reads NavMap data, instantiates correct 3D scene</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#6adfa8;">Phase-B · Dark Matter — Flight &amp; New Assets</div>
+      <div class="manifest-header-count">Apr 01 – May 01 · ∥ Parallel</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">Flight Systems</div>
+        <div class="mg-task">3D New Flight Test</div>
+        <div class="mg-task">Cockpit View Prototype</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">New Ships</div>
+        <div class="mg-task">New Ship Model</div>
+        <div class="mg-task">Cockpit View Integration</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Environment Assets</div>
+        <div class="mg-task">Derelicts: Satellites &amp; Probes</div>
+        <div class="mg-task">M1 Space Station (new)</div>
+        <div class="mg-task">Miscellaneous Stations</div>
+        <div class="mg-task">New Asteroid Models</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Solar System</div>
+        <div class="mg-task">3D Sun</div>
+        <div class="mg-task">All Planets</div>
+        <div class="mg-task">Moons per Planet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#ff8ab8;">Phase-C · Void Pulse — Immersion Layer</div>
+      <div class="manifest-header-count">May 01 – Jun 01 · Sequential</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">Audio</div>
+        <div class="mg-task">Sound FX: RCS Thruster</div>
+        <div class="mg-task">Sound FX: Main Engine</div>
+        <div class="mg-task">Sound FX: G-Force Stress</div>
+        <div class="mg-task">Sound FX: Collisions</div>
+        <div class="mg-task">Music System — Ambient &amp; Dynamic</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Tutorial Intro</div>
+        <div class="mg-task">Immersive UI Tooltips System</div>
+        <div class="mg-task">AI Assist via Terminal with Objectives</div>
+        <div class="mg-task">Full Intro-as-Tutorial Sequence</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#ffd880;">Phase-D · Singularity Arc — Milestone 0 + NavMap</div>
+      <div class="manifest-header-count">Jun 01 – Jul 01 · Sequential</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">Milestone 0 — Tutorial</div>
+        <div class="mg-task">Add Asteroid Belt to Game World</div>
+        <div class="mg-task">Asteroid Belt Playable &amp; Traversable</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Navigation</div>
+        <div class="mg-task">Full NavMap Travel: M0 → M1</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Milestone 1</div>
+        <div class="mg-task">Spinning Station Docking Mechanic</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Ship Systems</div>
+        <div class="mg-task">Hypersleep Manager Implementation</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- E1 -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#c88aff;">Phase-E1 · Starfall Epoch — StarLog &amp; History</div>
+      <div class="manifest-header-count">Jul 01 – Nov 01 · ∥ Parallel · 4 months</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">History Manager</div>
+        <div class="mg-task">History Manager System Architecture</div>
+        <div class="mg-task">StarLog Manager</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">StarLog Terminal</div>
+        <div class="mg-task">Terminal Diary UI — Comms, Notes, Entries</div>
+        <div class="mg-task">Auto-Register Comms / Events to Log</div>
+        <div class="mg-task">StarLog Addon Integration</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- E2 -->
+<div class="phase-block">
+  <div class="manifest">
+    <div class="manifest-header">
+      <div class="manifest-header-title" style="color:#80c8ff;">Phase-E2 · Event Horizon — Mechanics &amp; Rebalance</div>
+      <div class="manifest-header-count">Jul 01 – Nov 01 · ∥ Parallel · 4 months</div>
+    </div>
+    <div class="manifest-body">
+      <div class="manifest-group">
+        <div class="mg-label">New Mechanics</div>
+        <div class="mg-task">Comm Interception Mechanic</div>
+        <div class="mg-task">Repair Ship Mechanic</div>
+        <div class="mg-task">Ship INERTIA + Auto-Stabilizer</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Modular Destruction</div>
+        <div class="mg-task">RCS Tank Destruction</div>
+        <div class="mg-task">O2 Tank Destruction</div>
+        <div class="mg-task">Fluid Leakage Simulation</div>
+        <div class="mg-task">Explosion System</div>
+        <div class="mg-task">Atmosphere Breach</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Improvements</div>
+        <div class="mg-task">Docking PAPI — Space Version + Soft Dampener</div>
+        <div class="mg-task">RADAR — Mark Visited POIs as Done</div>
+        <div class="mg-task">Shield Regeneration Procedure</div>
+      </div>
+      <div class="manifest-group">
+        <div class="mg-label">Rebalance</div>
+        <div class="mg-task">Power Consumption Rebalance — All Systems</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="doc-footer">
+  <div class="doc-footer-left">POWERCORP · byteZorro Games · Dev Roadmap Rev.1 · 2025</div>
+  <div class="power-bar">
+    <div class="power-seg"></div><div class="power-seg"></div>
+    <div class="power-seg"></div><div class="power-seg"></div>
+    <div class="power-seg"></div><div class="power-seg"></div>
+    <div class="power-seg"></div><div class="power-seg"></div>
+    <div class="power-seg"></div><div class="power-seg"></div>
+  </div>
+</div>
+
+</body>
+</html>
