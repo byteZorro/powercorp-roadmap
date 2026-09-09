@@ -1,0 +1,69 @@
+<!-- =========================================================================
+     Repeating fragments. build.ps1 fills one of these per item in a content
+     file. Each block starts at its  <!-- @name -->  marker and runs to the
+     next one. Edit the markup here; edit the words in content/.
+     ========================================================================= -->
+
+<!-- @step -->
+        <article class="step">
+          <h3>{{title}}</h3>
+          <p>{{body}}</p>
+        </article>
+
+<!-- @card -->
+        <article class="card">
+          <span class="lamp{{lamp_class}}">{{lamp}}</span>
+          <h3>{{title}}</h3>
+          <p>{{body}}</p>
+        </article>
+
+<!-- @frame -->
+        <div class="frame frame--16x9">
+          <img src="{{src}}" alt="{{alt}}">{{caption}}
+        </div>
+
+<!-- @frame_caption -->
+<span class="frame__tag">{{caption}}</span>
+
+<!-- @terminal -->
+          <div class="term">
+            <div class="term__head">
+              <span>{{head}}</span>{{status}}
+            </div>
+            <div class="term__rule"></div>
+            <div class="term__body">{{body}}</div>
+            <div class="term__foot">
+              <span>{{foot_left}}</span>
+              <span>{{foot_right}}</span>
+            </div>
+          </div>{{caption}}
+
+<!-- @terminal_status -->
+<span class="status">{{status}}</span>
+
+<!-- @terminal_caption -->
+
+          <p class="attrib">{{caption}}</p>
+
+<!-- @factrow -->
+          <tr><th>{{label}}</th><td>{{value}}</td></tr>
+
+<!-- @copyblock -->
+      <div class="copyblock">
+        <h3>{{title}}</h3>
+        {{body}}
+      </div>
+
+<!-- @bullet -->
+        <li>{{body}}</li>
+
+<!-- @features_section -->
+  <section class="section section--panel">
+    <div class="wrap">
+      <p class="eyebrow">{{eyebrow}}</p>
+      <h2 class="display">{{heading}}</h2>
+      <ul class="bullets">
+{{items}}
+      </ul>
+    </div>
+  </section>

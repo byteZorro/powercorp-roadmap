@@ -1,0 +1,668 @@
+/* ============================================================================
+   PowerCorp — site stylesheet
+   ----------------------------------------------------------------------------
+   Palette and type are lifted from the game, not invented:
+     colours  -> assets/themes/console_theme.tres  (the default "powercorp" theme)
+                 scenes/views/systems/panels/console_palette.gd  (semantic set)
+     fonts    -> assets/fonts/Orbitron-*.ttf, Ac437_IBM_DOS_ISO9.ttf
+   Direction is MISSION DOSSIER: the game's UI vocabulary used as ACCENT
+   (hairlines, lamp chips, the middot separator, dashed null-states) over an
+   editorial layout. Deliberately NOT a full-page CRT costume.
+   ========================================================================== */
+
+/* --- 1. Fonts -------------------------------------------------------------
+   Self-hosted from the game's own assets. No CDN, no third-party request.
+   TTF rather than woff2 because no conversion tooling exists on the build
+   machine; each face is under 28 KB, so the cost is acceptable. */
+
+@font-face {
+  font-family: 'Orbitron Display';
+  src: url('../fonts/Orbitron-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Orbitron Chrome';
+  src: url('../fonts/Orbitron-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PC DOS';
+  src: url('../fonts/Ac437_IBM_DOS_ISO9.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* --- 2. Tokens ---------------------------------------------------------- */
+
+:root {
+  /* ground */
+  --bg-deep:    #0C0D12;
+  --bg-panel:   #12131B;
+  --bg-bar:     #1B1A1C;
+  --bg-raised:  #16171F;
+
+  /* ink */
+  --text:       #E8C89A;
+  --text-dim:   #8A7350;   /* ~3.5:1 on ground — LARGE TEXT / DECORATION ONLY */
+  --label:      #7C6E58;
+
+  /* signal — these are the game's fixed semantic colours */
+  --accent:     #FFB347;
+  --accent-hi:  #FFD18A;
+  --accent-menu:#FFB000;
+  --ok:         #4FD6A0;
+  --warn:       #FF5A4D;
+  --caution:    #FFD21F;
+
+  /* structure */
+  --rule:       rgba(255, 179, 71, 0.18);
+  --rule-soft:  rgba(255, 179, 71, 0.09);
+  --radius:     3px;
+
+  /* type */
+  --font-display: 'Orbitron Display', 'Orbitron', sans-serif;
+  --font-chrome:  'Orbitron Chrome', 'Orbitron', sans-serif;
+  --font-term:    'PC DOS', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-body:    'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system,
+                  'Helvetica Neue', Arial, sans-serif;
+
+  /* rhythm */
+  --gutter:     24px;
+  --measure:    1200px;
+  --section-y:  clamp(72px, 9vw, 132px);
+}
+
+/* --- 3. Reset ----------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* The header is sticky, so an anchor jump would otherwise park the heading
+     underneath it. Keep this a little taller than the header's own height. */
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* A long unbroken string - a pasted URL in the press kit is the usual one -
+     would otherwise push the whole page sideways on a phone. break-word only
+     breaks a word that genuinely does not fit, so normal prose is untouched. */
+  overflow-wrap: break-word;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hi); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: #12131B;
+  padding: 10px 18px;
+  font-family: var(--font-chrome);
+  z-index: 100;
+}
+.skip-link:focus { left: 8px; top: 8px; }
+
+/* --- 4. Layout primitives ----------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--section-y); }
+.section--tight { padding-block: clamp(48px, 6vw, 84px); }
+.section--panel { background: var(--bg-panel); }
+.section + .section { border-top: 1px solid var(--rule-soft); }
+
+/* --- 5. Type ------------------------------------------------------------ */
+
+h1, h2, h3 { margin: 0; font-weight: 900; }
+
+.display {
+  font-family: var(--font-display);
+  line-height: 1.03;
+  letter-spacing: -0.005em;
+  color: var(--text);
+}
+
+/* Capped at 58px, not 68px, for one measured reason: at 68px this headline ran to
+   six lines and pushed the wishlist button 26px below the fold on a 1440x900
+   laptop. The primary call to action has to be reachable without scrolling. */
+h1.display { font-size: clamp(34px, 5.6vw, 58px); }
+h2.display {
+  font-size: clamp(26px, 3.3vw, 42px);
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+
+.lead {
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.62;
+  color: var(--text);
+  max-width: 62ch;
+}
+
+p { margin: 0 0 1.1em; max-width: 68ch; }
+p:last-child { margin-bottom: 0; }
+
+/* The eyebrow: mono, tracked out, the game's own label register. */
+.eyebrow {
+  font-family: var(--font-term);
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.eyebrow--plain::after { display: none; }
+
+.dim { color: var(--text-dim); }
+
+/* Dashed null-state — the game never prints a fake zero for an unknown. */
+.null {
+  font-family: var(--font-term);
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* --- 6. Header ---------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(12, 13, 18, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 66px;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 21px;
+  letter-spacing: 0.01em;
+  color: var(--accent-menu);
+  /* Two radii, not one — the hud_bloom.gdshader signature: a tight core plus a
+     long faint tail reads as projected light rather than a blurred copy. */
+  text-shadow: 0 0 6px rgba(255, 179, 71, 0.5),
+               0 0 26px rgba(255, 179, 71, 0.18);
+  white-space: nowrap;
+}
+.wordmark:hover { color: var(--accent-menu); }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.site-nav a {
+  font-family: var(--font-chrome);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.site-nav a:hover { color: var(--accent); }
+
+/* --- 7. Buttons --------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-chrome);
+  font-size: 14px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 14px 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #12131B;
+  box-shadow: 0 0 0 rgba(255, 179, 71, 0);
+}
+.btn--primary:hover {
+  background: var(--accent-hi);
+  color: #12131B;
+  box-shadow: 0 0 22px rgba(255, 179, 71, 0.28);
+}
+
+.btn--ghost { background: transparent; color: var(--accent); }
+.btn--ghost:hover { background: rgba(255, 179, 71, 0.1); color: var(--accent-hi); }
+
+.btn--sm { padding: 10px 18px; font-size: 12px; }
+
+/* --- 8. Hero ------------------------------------------------------------ */
+
+.hero { padding-block: clamp(40px, 5vw, 68px) clamp(64px, 8vw, 116px); }
+
+.hero__grid {
+  display: grid;
+  /* Text column deliberately wider than the art: it buys the headline a line. */
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+
+.hero__stamp {
+  font-family: var(--font-term);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 22px;
+}
+
+.hero h1 { margin-bottom: 18px; }
+.hero h1 .quiet { display: block; color: var(--accent); }
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.hero__meta {
+  margin-top: 26px;
+  font-family: var(--font-term);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+/* --- 9. Placeholder + media frames -------------------------------------- */
+/* Deliberately, visibly marked. A placeholder that pretends to be finished art
+   is worse than an empty box, because nobody remembers to replace it. */
+
+.frame {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+.frame img { width: 100%; height: 100%; object-fit: cover; }
+
+.frame--16x9 { aspect-ratio: 16 / 9; }
+.frame--4x5  { aspect-ratio: 4 / 5; }
+
+.frame__tag {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  font-family: var(--font-term);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  background: rgba(12, 13, 18, 0.82);
+  border: 1px solid var(--rule);
+  padding: 4px 8px;
+  pointer-events: none;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+.media-grid > :first-child { grid-column: 1 / -1; }
+
+/* --- 10. Lamp chips + system cards -------------------------------------- */
+/* The annunciator vocabulary: a short code in a bordered box. */
+
+.lamp {
+  display: inline-block;
+  font-family: var(--font-term);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.13em;
+  padding: 6px 9px 5px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: var(--accent);
+  background: rgba(255, 179, 71, 0.05);
+}
+.lamp--warn { color: var(--warn); border-color: rgba(255, 90, 77, 0.4); background: rgba(255, 90, 77, 0.06); }
+.lamp--ok   { color: var(--ok);   border-color: rgba(79, 214, 160, 0.35); background: rgba(79, 214, 160, 0.05); }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 44px;
+  background: var(--rule-soft);
+  border: 1px solid var(--rule-soft);
+}
+
+.card {
+  background: var(--bg-deep);
+  padding: 30px clamp(22px, 2.4vw, 34px) 32px;
+}
+.section--panel .card { background: var(--bg-panel); }
+
+.card h3 {
+  font-family: var(--font-chrome);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 16px 0 12px;
+  line-height: 1.35;
+}
+.card p { font-size: 15.5px; line-height: 1.62; color: var(--text); opacity: 0.9; }
+
+/* --- 11. Loop steps ----------------------------------------------------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 46px;
+  counter-reset: step;
+}
+
+.step { position: relative; padding-top: 22px; border-top: 1px solid var(--rule); }
+.step::before {
+  counter-increment: step;
+  content: '0' counter(step);
+  display: block;
+  font-family: var(--font-term);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.step h3 {
+  font-family: var(--font-chrome);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 11px;
+  line-height: 1.35;
+}
+.step p { font-size: 15px; line-height: 1.6; opacity: 0.9; }
+
+/* --- 12. Terminal block ------------------------------------------------- */
+/* Mirrors the game's actual terminal chrome: header bar, 2px amber rule, body,
+   1px footer rule at 60%, footer bar with the MET clock. */
+
+.term {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+
+.term__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px 10px;
+  font-family: var(--font-term);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--accent-hi);
+}
+.term__head .status { color: var(--ok); }
+.term__rule { height: 2px; background: #F2A633; }
+
+.term__body {
+  padding: 20px 18px;
+  font-family: var(--font-term);
+  font-size: 14.5px;
+  line-height: 1.72;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.term__foot {
+  border-top: 1px solid rgba(242, 166, 51, 0.6);
+  padding: 9px 16px;
+  font-family: var(--font-term);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 42px;
+}
+
+.attrib {
+  margin-top: 12px;
+  font-family: var(--font-term);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+/* --- 13. Lore ticker ---------------------------------------------------- */
+
+.ticker {
+  margin-top: 48px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 26px 0;
+  text-align: center;
+}
+.ticker__line {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2.1vw, 25px);
+  line-height: 1.35;
+  color: var(--accent);
+  min-height: 1.35em;
+  transition: opacity 420ms ease;
+}
+.ticker__label {
+  font-family: var(--font-term);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--label);
+  margin-bottom: 14px;
+}
+
+/* --- 14. Developer section ---------------------------------------------- */
+
+.dev-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(32px, 4.5vw, 64px);
+  align-items: start;
+  margin-top: 40px;
+}
+.pullquote {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.2vw, 27px);
+  line-height: 1.36;
+  color: var(--accent);
+  margin: 0 0 20px;
+  max-width: 22ch;
+}
+
+/* --- 15. Final CTA ------------------------------------------------------ */
+
+.cta { text-align: center; }
+.cta h2 { margin-bottom: 20px; }
+.cta .lead { margin-inline: auto; }
+.cta__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+/* --- 16. Footer --------------------------------------------------------- */
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  background: var(--bg-panel);
+  padding-block: 46px 40px;
+  font-size: 14px;
+}
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: space-between;
+}
+.site-footer a { color: var(--text); }
+.site-footer a:hover { color: var(--accent); }
+.foot-links { display: flex; flex-wrap: wrap; gap: 22px; }
+.foot-legal { color: var(--text-dim); font-size: 13px; line-height: 1.7; max-width: 46ch; }
+.foot-legal .met { font-family: var(--font-term); letter-spacing: 0.08em; }
+
+/* --- 17. Press page ----------------------------------------------------- */
+
+.factsheet {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 32px;
+  font-size: 15.5px;
+}
+.factsheet th, .factsheet td {
+  text-align: left;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+.factsheet th {
+  font-family: var(--font-term);
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+  width: 30%;
+  white-space: nowrap;
+}
+.factsheet tr:last-child th, .factsheet tr:last-child td { border-bottom: 0; }
+
+.copyblock {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  padding: 24px 26px;
+  margin-top: 22px;
+}
+.copyblock h3 {
+  font-family: var(--font-term);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+
+.bullets { margin: 24px 0 0; padding: 0; list-style: none; }
+.bullets li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 13px;
+  max-width: 72ch;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+.bullets li::before {
+  content: '·';
+  position: absolute;
+  left: 8px;
+  color: var(--accent);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* --- 18. Responsive ----------------------------------------------------- */
+
+@media (max-width: 1020px) {
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 26px; }
+  .hero__grid { grid-template-columns: 1fr; gap: 40px; }
+  .dev-grid { grid-template-columns: 1fr; gap: 28px; }
+  .pullquote { max-width: none; }
+}
+
+@media (max-width: 760px) {
+  body { font-size: 16px; }
+  .cards { grid-template-columns: 1fr; }
+  .quote-grid { grid-template-columns: 1fr; }
+  .media-grid { grid-template-columns: 1fr; }
+  .site-nav { gap: 18px; }
+  .site-nav a:not(.btn) { display: none; }   /* keep the wishlist button visible */
+  .factsheet th { width: auto; white-space: normal; display: block; border-bottom: 0; padding-bottom: 2px; }
+  .factsheet td { display: block; padding-top: 2px; }
+  .site-header .wrap { min-height: 58px; }
+  .term__body { font-size: 13.5px; }
+  /* The mission stamp is one unbroken thought — let it shrink rather than wrap. */
+  .hero__stamp { font-size: 11.5px; letter-spacing: 0.1em; }
+  html { scroll-padding-top: 74px; }
+}
+
+@media (max-width: 460px) {
+  .steps { grid-template-columns: 1fr; }
+  .hero__cta .btn, .cta__row .btn { width: 100%; justify-content: center; }
+}
